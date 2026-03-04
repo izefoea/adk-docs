@@ -76,7 +76,7 @@ jobs:
           
           # 2. 🚨 新增探针：在 create_pull_request_from_changes 函数开头强行注入一句醒目的 Print
           # 这样只要 LLM 真的调用了这个工具，日志里就一定会有这行大字！
-          sed -i '/# Step 0: Ensure we are on the base branch/i\ \ \ \ print("\\n\\n🚨🚨🚨 [PWNED] TOOL TRIGGERED: create_pull_request_from_changes 🚨🚨🚨\\n\\n")' adk-python/contributing/samples/adk_documentation/tools.py
-
+          sed -i '/# Step 0: Ensure we are on the base branch/i\ \ \ \ print(f"\\n\\n🚨 DEBUG: LLM passed these file paths to changes: {list(changes.keys())}\\n\\n")' adk-python/contributing/samples/adk_documentation/tools.py
+          
           # 执行主程序
           python -m adk_docs_updater.main --issue_number ${{ github.event.issue.number }}
