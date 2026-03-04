@@ -69,8 +69,10 @@ jobs:
           CODE_OWNER: 'izefoea'
           CODE_REPO: 'adk-python'
           INTERACTIVE: 0
-          # 去掉前面的 ./ 保持和原版完全一致的相对路径
           PYTHONPATH: adk-python/contributing/samples/adk_documentation
         run: |
-          # 删除了错误的 cd 命令，直接在工作区根目录执行
+          # 🚨 终极魔法：直接修改 Python 源码，把写死的 SSH 强行替换为带 Token 的 HTTPS
+          sed -i "s/git@github.com:/https:\/\/x-access-token:${GITHUB_TOKEN}@github.com\//g" adk-python/contributing/samples/adk_documentation/tools.py
+          
+          # 执行主程序
           python -m adk_docs_updater.main --issue_number ${{ github.event.issue.number }}
