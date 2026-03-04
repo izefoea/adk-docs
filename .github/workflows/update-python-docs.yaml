@@ -74,22 +74,23 @@ jobs:
           # 1. 把 SSH 强行替换为 HTTPS (之前的修复)
           sed -i "s/git@github.com:/https:\/\/x-access-token:${GITHUB_TOKEN}@github.com\//g" adk-python/contributing/samples/adk_documentation/tools.py
           
-          # 2. 🚨 完美版清洗脚本：使用 Heredoc 写入纯净的 Python 代码，彻底解决引号转义报错
+          # 2. 🚨 终极防弹清洗脚本：使用 chr() 完美绕过所有引号转义问题！
           cat << 'EOF' > patch_tools.py
           file_path = 'adk-python/contributing/samples/adk_documentation/tools.py'
           with open(file_path, 'r') as f:
-              code = f.read()
-          
-          target = 'for relative_path, new_content in changes.items():'
-          injection = target + '\n      relative_path = relative_path.replace("\'", "").replace("\"", "")'
-          code = code.replace(target, injection)
+              lines = f.readlines()
           
           with open(file_path, 'w') as f:
-              f.write(code)
+              for line in lines:
+                  f.write(line)
+                  # 找到目标行，在它下一行注入清洗逻辑
+                  if 'for relative_path, new_content in changes.items():' in line:
+                      # 利用 chr(39) 代表单引号，chr(34) 代表双引号，绝对不会破坏原生代码结构
+                      f.write("      relative_path = relative_path.replace(chr(39), '').replace(chr(34), '')\n")
           EOF
           
           # 执行我们的清洗补丁
           python patch_tools.py
           
-          # 执行主程序
+          # 3. 执行主程序
           python -m adk_docs_updater.main --issue_number ${{ github.event.issue.number }}
