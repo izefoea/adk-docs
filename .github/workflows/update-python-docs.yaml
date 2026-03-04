@@ -71,8 +71,12 @@ jobs:
           INTERACTIVE: 0
           PYTHONPATH: adk-python/contributing/samples/adk_documentation
         run: |
-          # 🚨 终极魔法：直接修改 Python 源码，把写死的 SSH 强行替换为带 Token 的 HTTPS
+          # 1. 把 SSH 强行替换为 HTTPS (之前的修复)
           sed -i "s/git@github.com:/https:\/\/x-access-token:${GITHUB_TOKEN}@github.com\//g" adk-python/contributing/samples/adk_documentation/tools.py
           
+          # 2. 🚨 新增探针：在 create_pull_request_from_changes 函数开头强行注入一句醒目的 Print
+          # 这样只要 LLM 真的调用了这个工具，日志里就一定会有这行大字！
+          sed -i '/def create_pull_request_from_changes(/a\ \ \ \ print("\\n\\n🚨🚨🚨 [PWNED] TOOL TRIGGERED: create_pull_request_from_changes 🚨🚨🚨\\n\\n")' adk-python/contributing/samples/adk_documentation/tools.py
+
           # 执行主程序
           python -m adk_docs_updater.main --issue_number ${{ github.event.issue.number }}
