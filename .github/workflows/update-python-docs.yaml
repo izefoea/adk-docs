@@ -75,21 +75,21 @@ jobs:
           sed -i "s/git@github.com:/https:\/\/x-access-token:${GITHUB_TOKEN}@github.com\//g" adk-python/contributing/samples/adk_documentation/tools.py
           
           # 2. 🚨 完美版清洗脚本：使用 Heredoc 写入纯净的 Python 代码，彻底解决引号转义报错
-          cat << 'EOF' > patch_tools.py
-          file_path = 'adk-python/contributing/samples/adk_documentation/tools.py'
-          with open(file_path, 'r') as f:
-              code = f.read()
+          # cat << 'EOF' > patch_tools.py
+          # file_path = 'adk-python/contributing/samples/adk_documentation/tools.py'
+          # with open(file_path, 'r') as f:
+          #     code = f.read()
           
-          target = 'for relative_path, new_content in changes.items():'
-          injection = target + '\n      relative_path = relative_path.replace("\'", "").replace("\"", "")'
-          code = code.replace(target, injection)
+          # target = 'for relative_path, new_content in changes.items():'
+          # injection = target + '\n      relative_path = relative_path.replace("\'", "").replace("\"", "")'
+          # code = code.replace(target, injection)
           
-          with open(file_path, 'w') as f:
-              f.write(code)
-          EOF
+          # with open(file_path, 'w') as f:
+          #     f.write(code)
+          # EOF
           
-          # 执行我们的清洗补丁
-          python patch_tools.py
+          # # 执行我们的清洗补丁
+          # python patch_tools.py
           
           # 执行主程序
           python -m adk_docs_updater.main --issue_number ${{ github.event.issue.number }}
