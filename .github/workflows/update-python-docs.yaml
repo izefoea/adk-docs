@@ -2,7 +2,7 @@ name: Update ADK Python Docs (izefoea PoC)
 
 on:
   issues:
-    types: [opened, labeled]
+    types: [opened, reopened, labeled]
 
 # 给予该 Workflow 读写代码和 PR 的权限，替代掉原版专用的 ADK_BOT_GITHUB_TOKEN
 permissions:
