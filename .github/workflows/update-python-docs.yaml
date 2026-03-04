@@ -52,23 +52,16 @@ jobs:
 
       - name: Run ADK docs updater script
         env:
-          # 使用原生 token 创建 PR
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
-          # 核心更改：关闭 VertexAI，使用标准的 API Key
           GOOGLE_GENAI_USE_VERTEXAI: 0
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }} 
-          
-          # 替换为你自己的仓库和所有者
           DOC_OWNER: 'izefoea'
           DOC_REPO: 'adk-docs'
           CODE_OWNER: 'izefoea'
           CODE_REPO: 'adk-python'
           INTERACTIVE: 0
-          
-          # 保持 Python 路径指向包含主逻辑的代码库
-          PYTHONPATH: ./adk-python/contributing/samples/adk_documentation
+          # 去掉前面的 ./ 保持和原版完全一致的相对路径
+          PYTHONPATH: adk-python/contributing/samples/adk_documentation
         run: |
-          # 切换到 docs 目录以确保路径正确（根据 agent.py 的实际逻辑可能需要调整）
-          cd ./adk-docs
+          # 删除了错误的 cd 命令，直接在工作区根目录执行
           python -m adk_docs_updater.main --issue_number ${{ github.event.issue.number }}
