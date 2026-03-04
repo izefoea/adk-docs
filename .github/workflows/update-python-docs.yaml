@@ -1,69 +1,74 @@
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-name: Update ADK Python Docs
+name: Update ADK Python Docs (izefoea PoC)
 
 on:
   issues:
     types: [opened, labeled]
 
+# 给予该 Workflow 读写代码和 PR 的权限，替代掉原版专用的 ADK_BOT_GITHUB_TOKEN
+permissions:
+  contents: write
+  pull-requests: write
+  issues: read
+
 jobs:
   update-adk-python-docs-from-issue:
+    # 只要 Issue 带这个标签就触发，方便测试
     if: contains(github.event.issue.labels.*.name, 'docs updates')
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout ADK Docs repository
+        uses: actions/checkout@v4
+        with:
+          path: ./adk-docs # 将当前 docs 仓库 clone 到特定目录
+
       - name: Checkout ADK Python repository
         uses: actions/checkout@v4
         with:
-          repository: google/adk-python
+          repository: izefoea/adk-python # 替换为你的 Fork
           path: ./adk-python
-          token: ${{ secrets.ADK_BOT_GITHUB_TOKEN }}
+          # 使用默认的 GITHUB_TOKEN 即可
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Authenticate to Google Cloud
-        id: auth
-        uses: 'google-github-actions/auth@v2'
-        with:
-          credentials_json: '${{ secrets.ADK_GCP_SA_KEY }}'
+      # [删除了 Authenticate to Google Cloud 步骤]
+      # [删除了 Load adk-bot SSH Private Key 步骤]
 
-      - name: Load adk-bot SSH Private Key
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.ADK_BOT_SSH_PRIVATE_KEY }}
-
-      - name: Set Git Author Identity (for adk-bot)
+      - name: Set Git Author Identity
         run: |
-          git config --global user.name "adk-bot"
-          git config --global user.email "adk-bot@google.com"
+          git config --global user.name "izefoea-bot"
+          git config --global user.email "bot@izefoea.com"
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install google-adk
+          # 如果 google-adk 包含一些私有依赖，可能需要在 adk-python 目录下本地安装
+          # pip install -e ./adk-python
 
       - name: Run ADK docs updater script
         env:
-          GITHUB_TOKEN: ${{ secrets.ADK_BOT_GITHUB_TOKEN }}
-          GOOGLE_CLOUD_PROJECT: ${{ secrets.GOOGLE_CLOUD_PROJECT }}
-          GOOGLE_CLOUD_LOCATION: ${{ secrets.GOOGLE_CLOUD_LOCATION }}
-          GOOGLE_GENAI_USE_VERTEXAI: 1
-          DOC_OWNER: 'google'
+          # 使用原生 token 创建 PR
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+          # 核心更改：关闭 VertexAI，使用标准的 API Key
+          GOOGLE_GENAI_USE_VERTEXAI: 0
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }} 
+          
+          # 替换为你自己的仓库和所有者
+          DOC_OWNER: 'izefoea'
           DOC_REPO: 'adk-docs'
-          CODE_OWNER: 'google'
+          CODE_OWNER: 'izefoea'
           CODE_REPO: 'adk-python'
           INTERACTIVE: 0
-          PYTHONPATH: adk-python/contributing/samples/adk_documentation
-        run:
+          
+          # 保持 Python 路径指向包含主逻辑的代码库
+          PYTHONPATH: ./adk-python/contributing/samples/adk_documentation
+        run: |
+          # 切换到 docs 目录以确保路径正确（根据 agent.py 的实际逻辑可能需要调整）
+          cd ./adk-docs
           python -m adk_docs_updater.main --issue_number ${{ github.event.issue.number }}
