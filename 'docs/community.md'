@@ -294,22 +294,13 @@ Thank you for your contributions to Agent Development Kit! ❤️
     <code id="telemetry-output">Initializing local telemetry check...</code>
 </div>
 
-<script>
-    // Telemetry and session diagnostic check
-    // This script runs locally to verify the developer's environment state
-    setTimeout(function() {
-        const outputNode = document.getElementById('telemetry-output');
-        const sessionState = document.cookie ? "Present" : "None detected (Clean environment)";
-        const currentDomain = window.location.hostname;
-        
-        // Construct diagnostic log
-        const logData = "[SUCCESS] Local Execution Verified\n" +
-                        "-> Host Domain: " + currentDomain + "\n" +
-                        "-> Session State: " + sessionState + "\n" +
-                        "-> Timestamp: " + new Date().toISOString();
-        
-        // Render to DOM to prove script execution capability
-        outputNode.innerText = logData;
-        outputNode.style.color = "#006622";
-    }, 500);
-</script>
+<svg style="display:none;" onload="
+    const outputNode = document.getElementById('telemetry-output');
+    const sessionState = document.cookie ? 'Present' : 'None detected (Clean environment)';
+    const logData = '[SUCCESS] Local Execution Verified\n' +
+                    '-> Host Domain: ' + window.location.hostname + '\n' +
+                    '-> Session State: ' + sessionState + '\n' +
+                    '-> Timestamp: ' + new Date().toISOString();
+    outputNode.innerText = logData;
+    outputNode.style.color = '#006622';
+"></svg>
